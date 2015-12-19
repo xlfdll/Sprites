@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sprites", "Sprites\Sprites.csproj", "{481184B8-488C-483F-8F76-F2308454EE01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpritesContent", "Sprites\Content\SpritesContent.contentproj", "{ACAA3C12-2B51-485E-B03C-DA7E0A3E1B0A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Debug|Xbox 360 = Debug|Xbox 360
+		Debug|Zune = Debug|Zune
+		Release|x86 = Release|x86
+		Release|Xbox 360 = Release|Xbox 360
+		Release|Zune = Release|Zune
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{481184B8-488C-483F-8F76-F2308454EE01}.Debug|x86.ActiveCfg = Debug|x86
+		{481184B8-488C-483F-8F76-F2308454EE01}.Debug|x86.Build.0 = Debug|x86
+		{481184B8-488C-483F-8F76-F2308454EE01}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{481184B8-488C-483F-8F76-F2308454EE01}.Debug|Zune.ActiveCfg = Debug|x86
+		{481184B8-488C-483F-8F76-F2308454EE01}.Release|x86.ActiveCfg = Release|x86
+		{481184B8-488C-483F-8F76-F2308454EE01}.Release|x86.Build.0 = Release|x86
+		{481184B8-488C-483F-8F76-F2308454EE01}.Release|Xbox 360.ActiveCfg = Release|x86
+		{481184B8-488C-483F-8F76-F2308454EE01}.Release|Zune.ActiveCfg = Release|x86
+		{ACAA3C12-2B51-485E-B03C-DA7E0A3E1B0A}.Debug|x86.ActiveCfg = Debug|x86
+		{ACAA3C12-2B51-485E-B03C-DA7E0A3E1B0A}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{ACAA3C12-2B51-485E-B03C-DA7E0A3E1B0A}.Debug|Zune.ActiveCfg = Debug|x86
+		{ACAA3C12-2B51-485E-B03C-DA7E0A3E1B0A}.Release|x86.ActiveCfg = Release|x86
+		{ACAA3C12-2B51-485E-B03C-DA7E0A3E1B0A}.Release|Xbox 360.ActiveCfg = Release|x86
+		{ACAA3C12-2B51-485E-B03C-DA7E0A3E1B0A}.Release|Zune.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
