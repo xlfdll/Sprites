@@ -1,19 +1,15 @@
 using System;
-using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace Sprites
 {
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class MainGame : Microsoft.Xna.Framework.Game
+    public class MainGame : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -57,8 +53,6 @@ namespace Sprites
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
@@ -71,7 +65,6 @@ namespace Sprites
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
             backgroundTexture2D = Content.Load<Texture2D>(@"Sprites\background");
 
             cannon = new GameObject(Content.Load<Texture2D>(@"Sprites\cannon"));
@@ -102,8 +95,6 @@ namespace Sprites
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
-
             base.UnloadContent();
         }
 
@@ -116,9 +107,10 @@ namespace Sprites
         {
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            {
                 this.Exit();
+            }
 
-            // TODO: Add your update logic here
             GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
             cannon.rotation += gamePadState.ThumbSticks.Left.X * 0.1f;
 
@@ -241,7 +233,6 @@ namespace Sprites
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
             spriteBatch.Begin();
 
             spriteBatch.Draw(backgroundTexture2D, viewportRect, Color.White);
@@ -267,7 +258,7 @@ namespace Sprites
             spriteBatch.DrawString(font, "Score: " + score.ToString(), new Vector2(scoreDrawPoint.X * viewportRect.Width, scoreDrawPoint.Y * viewportRect.Height), Color.Yellow);
 
             spriteBatch.End();
-            
+
             base.Draw(gameTime);
         }
     }

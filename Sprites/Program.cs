@@ -1,5 +1,3 @@
-using System;
-
 namespace Sprites
 {
     static class Program
@@ -16,4 +14,3 @@ namespace Sprites
         }
     }
 }
-
