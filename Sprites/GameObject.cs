@@ -5,23 +5,23 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Sprites
 {
-    class GameObject
-    {
-        public Texture2D sprite;
-        public Vector2 position;
-        public Single rotation;
-        public Vector2 center;
-        public Vector2 velocity;
-        public Boolean alive;
+	public class GameObject
+	{
+		public GameObject(Texture2D loadedTexture)
+		{
+			this.Sprite = loadedTexture;
+			this.Position = Vector2.Zero;
+			this.Center = new Vector2(Sprite.Width / 2, Sprite.Height / 2);
+			this.Rotation = 0.0f;
+			this.Velocity = Vector2.Zero;
+			this.IsAlive = false;
+		}
 
-        public GameObject(Texture2D loadedTexture)
-        {
-            rotation = 0.0f;
-            position = Vector2.Zero;
-            sprite = loadedTexture;
-            center = new Vector2(sprite.Width / 2, sprite.Height / 2);
-            velocity = Vector2.Zero;
-            alive = false;
-        }
-    }
+		public Texture2D Sprite { get; set; }
+		public Vector2 Position { get; set; }
+		public Vector2 Center { get; set; }
+		public Single Rotation { get; set; }
+		public Vector2 Velocity { get; set; }
+		public Boolean IsAlive { get; set; }
+	}
 }

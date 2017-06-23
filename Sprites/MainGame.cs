@@ -6,260 +6,261 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Sprites
 {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
-    public class MainGame : Game
-    {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+	/// <summary>
+	/// This is the main type for your game
+	/// </summary>
+	public class MainGame : Game
+	{
+		public MainGame()
+		{
+			graphics = new GraphicsDeviceManager(this);
 
-        Texture2D backgroundTexture2D;
-        Rectangle viewportRect;
+			Content.RootDirectory = "Content";
+		}
 
-        GameObject cannon;
-        GameObject[] cannonBalls;
+		/// <summary>
+		/// Allows the game to perform any initialization it needs to before starting to run.
+		/// This is where it can query for any required services and load any non-graphic
+		/// related content.  Calling base.Initialize will enumerate through any components
+		/// and initialize them as well.
+		/// </summary>
+		protected override void Initialize()
+		{
+			base.Initialize();
+		}
 
-        GameObject[] enemies;
+		/// <summary>
+		/// LoadContent will be called once per game and is the place to load
+		/// all of your content.
+		/// </summary>
+		protected override void LoadContent()
+		{
+			// Create a new SpriteBatch, which can be used to draw textures.
+			spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        SpriteFont font;
-        Vector2 scoreDrawPoint = new Vector2(0.1f, 0.1f);
+			backgroundTexture2D = Content.Load<Texture2D>(@"Sprites\background");
 
-        GamePadState previousGamePadState = GamePad.GetState(PlayerIndex.One);
-        KeyboardState previousKeyboardState = Keyboard.GetState();
+			cannon = new GameObject(Content.Load<Texture2D>(@"Sprites\cannon"));
+			cannon.Position = new Vector2(120, graphics.GraphicsDevice.Viewport.Height - 80);
 
-        readonly Int32 maxCannonBalls = 10;
-        readonly Int32 maxEnemies = 10;
+			cannonBalls = new GameObject[maxCannonBalls];
 
-        readonly Single maxEnemyHeight = 0.1f;
-        readonly Single minEnemyHeight = 0.5f;
-        readonly Single maxEnemyVelocity = 5.0f;
-        readonly Single minEnemyVelocity = 1.0f;
+			for (Int32 i = 0; i < maxCannonBalls; i++)
+			{
+				cannonBalls[i] = new GameObject(Content.Load<Texture2D>(@"Sprites\cannonball"));
+			}
 
-        Random random = new Random();
-        Int32 score = 0;
+			enemies = new GameObject[maxEnemies];
 
-        public MainGame()
-        {
-            graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
-        }
+			for (Int32 i = 0; i < maxEnemies; i++)
+			{
+				enemies[i] = new GameObject(Content.Load<Texture2D>(@"Sprites\enemy"));
+			}
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
-        protected override void Initialize()
-        {
-            base.Initialize();
-        }
+			font = Content.Load<SpriteFont>(@"Fonts\GameFont");
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
-        protected override void LoadContent()
-        {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+			viewportRect = new Rectangle(0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+		}
 
-            backgroundTexture2D = Content.Load<Texture2D>(@"Sprites\background");
+		/// <summary>
+		/// UnloadContent will be called once per game and is the place to unload
+		/// all content.
+		/// </summary>
+		protected override void UnloadContent()
+		{
+			base.UnloadContent();
+		}
 
-            cannon = new GameObject(Content.Load<Texture2D>(@"Sprites\cannon"));
-            cannon.position = new Vector2(120, graphics.GraphicsDevice.Viewport.Height - 80);
+		/// <summary>
+		/// Allows the game to run logic such as updating the world,
+		/// checking for collisions, gathering input, and playing audio.
+		/// </summary>
+		/// <param name="gameTime">Provides a snapshot of timing values.</param>
+		protected override void Update(GameTime gameTime)
+		{
+			// Allows the game to exit
+			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+			{
+				this.Exit();
+			}
 
-            cannonBalls = new GameObject[maxCannonBalls];
+			GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
 
-            for (Int32 i = 0; i < maxCannonBalls; i++)
-            {
-                cannonBalls[i] = new GameObject(Content.Load<Texture2D>(@"Sprites\cannonball"));
-            }
+			cannon.Rotation += gamePadState.ThumbSticks.Left.X * 0.1f;
 
-            enemies = new GameObject[maxEnemies];
+			if (gamePadState.Buttons.A == ButtonState.Pressed && previousGamePadState.Buttons.A == ButtonState.Released)
+			{
+				this.FireCannonBall();
+			}
 
-            for (Int32 i = 0; i < maxEnemies; i++)
-            {
-                enemies[i] = new GameObject(Content.Load<Texture2D>(@"Sprites\enemy"));
-            }
-
-            font = Content.Load<SpriteFont>(@"Fonts\GameFont");
-
-            viewportRect = new Rectangle(0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
-        }
-
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            base.UnloadContent();
-        }
-
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
-        {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-            {
-                this.Exit();
-            }
-
-            GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
-            cannon.rotation += gamePadState.ThumbSticks.Left.X * 0.1f;
-
-            if (gamePadState.Buttons.A == ButtonState.Pressed && previousGamePadState.Buttons.A == ButtonState.Released)
-            {
-                FireCannonBall();
-            }
-
-            previousGamePadState = gamePadState;
+			previousGamePadState = gamePadState;
 
 #if !XBOX
-            KeyboardState keyboardState = Keyboard.GetState();
+			KeyboardState keyboardState = Keyboard.GetState();
 
-            if (keyboardState.IsKeyDown(Keys.Left))
-            {
-                cannon.rotation -= 0.1f;
-            }
-            if (keyboardState.IsKeyDown(Keys.Right))
-            {
-                cannon.rotation += 0.1f;
-            }
-            if (keyboardState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
-            {
-                FireCannonBall();
-            }
+			if (keyboardState.IsKeyDown(Keys.Left))
+			{
+				cannon.Rotation -= 0.1f;
+			}
+			if (keyboardState.IsKeyDown(Keys.Right))
+			{
+				cannon.Rotation += 0.1f;
+			}
+			if (keyboardState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
+			{
+				this.FireCannonBall();
+			}
 
-            previousKeyboardState = keyboardState;
-
-            //MouseState mouseState = Mouse.GetState();
+			previousKeyboardState = keyboardState;
 #endif
 
-            cannon.rotation = MathHelper.Clamp(cannon.rotation, -MathHelper.PiOver2, 0);
+			cannon.Rotation = MathHelper.Clamp(cannon.Rotation, -MathHelper.PiOver2, 0);
 
-            UpdateCannonBalls();
-            UpdateEnemies();
+			this.UpdateCannonBalls();
+			this.UpdateEnemies();
 
-            base.Update(gameTime);
-        }
+			base.Update(gameTime);
+		}
 
-        public void UpdateCannonBalls()
-        {
-            foreach (GameObject ball in cannonBalls)
-            {
-                if (ball.alive)
-                {
-                    ball.position += ball.velocity;
+		/// <summary>
+		/// This is called when the game should draw itself.
+		/// </summary>
+		/// <param name="gameTime">Provides a snapshot of timing values.</param>
+		protected override void Draw(GameTime gameTime)
+		{
+			GraphicsDevice.Clear(Color.CornflowerBlue);
 
-                    if (!viewportRect.Contains(new Point((Int32)ball.position.X, (Int32)ball.position.Y)))
-                    {
-                        ball.alive = false;
-                        continue;
-                    }
+			spriteBatch.Begin();
 
-                    Rectangle cannonBallRect = new Rectangle((Int32)ball.position.X, (Int32)ball.position.Y, ball.sprite.Width, ball.sprite.Height);
+			spriteBatch.Draw(backgroundTexture2D, viewportRect, Color.White);
 
-                    foreach (GameObject enemy in enemies)
-                    {
-                        Rectangle enemyRect = new Rectangle((Int32)enemy.position.X, (Int32)enemy.position.Y, enemy.sprite.Width, enemy.sprite.Height);
+			foreach (GameObject ball in cannonBalls)
+			{
+				if (ball.IsAlive)
+				{
+					spriteBatch.Draw(ball.Sprite, ball.Position, Color.White);
+				}
+			}
 
-                        if (cannonBallRect.Intersects(enemyRect))
-                        {
-                            ball.alive = false;
-                            enemy.alive = false;
+			spriteBatch.Draw(cannon.Sprite, cannon.Position, null, Color.White, cannon.Rotation, cannon.Center, 1.0f, SpriteEffects.None, 0);
 
-                            score += 1;
+			foreach (GameObject enemy in enemies)
+			{
+				if (enemy.IsAlive)
+				{
+					spriteBatch.Draw(enemy.Sprite, enemy.Position, Color.White);
+				}
+			}
 
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+			spriteBatch.DrawString(font, "Score: " + score.ToString(), new Vector2(scoreDrawPoint.X * viewportRect.Width, scoreDrawPoint.Y * viewportRect.Height), Color.Yellow);
 
-        public void UpdateEnemies()
-        {
-            foreach (GameObject enemy in enemies)
-            {
-                if (enemy.alive)
-                {
-                    enemy.position += enemy.velocity;
+			spriteBatch.End();
 
-                    if (!viewportRect.Contains(new Point((Int32)enemy.position.X, (Int32)enemy.position.Y)))
-                    {
-                        enemy.alive = false;
-                    }
-                }
-                else
-                {
-                    enemy.alive = true;
-                    enemy.position = new Vector2(viewportRect.Right,
-                        MathHelper.Lerp(
-                        (Single)viewportRect.Height * minEnemyHeight,
-                        (Single)viewportRect.Height * maxEnemyHeight,
-                        (Single)random.NextDouble()));
-                    enemy.velocity = new Vector2(MathHelper.Lerp(-minEnemyVelocity, -maxEnemyVelocity, (Single)random.NextDouble()), 0);
-                }
-            }
-        }
+			base.Draw(gameTime);
+		}
 
-        public void FireCannonBall()
-        {
-            foreach (GameObject ball in cannonBalls)
-            {
-                if (!ball.alive)
-                {
-                    ball.alive = true;
-                    ball.position = cannon.position + new Vector2((Single)Math.Sin(cannon.sprite.Height)) - ball.center;
-                    ball.velocity = new Vector2((Single)Math.Cos(cannon.rotation), (Single)Math.Sin(cannon.rotation)) * 5.0f;
+		public void UpdateCannonBalls()
+		{
+			foreach (GameObject ball in cannonBalls)
+			{
+				if (ball.IsAlive)
+				{
+					ball.Position += ball.Velocity;
 
-                    return;
-                }
-            }
-        }
+					if (!viewportRect.Contains(new Point((Int32)ball.Position.X, (Int32)ball.Position.Y)))
+					{
+						ball.IsAlive = false;
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+						continue;
+					}
 
-            spriteBatch.Begin();
+					Rectangle cannonBallRect = new Rectangle((Int32)ball.Position.X, (Int32)ball.Position.Y, ball.Sprite.Width, ball.Sprite.Height);
 
-            spriteBatch.Draw(backgroundTexture2D, viewportRect, Color.White);
+					foreach (GameObject enemy in enemies)
+					{
+						Rectangle enemyRect = new Rectangle((Int32)enemy.Position.X, (Int32)enemy.Position.Y, enemy.Sprite.Width, enemy.Sprite.Height);
 
-            foreach (GameObject ball in cannonBalls)
-            {
-                if (ball.alive)
-                {
-                    spriteBatch.Draw(ball.sprite, ball.position, Color.White);
-                }
-            }
+						if (cannonBallRect.Intersects(enemyRect))
+						{
+							ball.IsAlive = false;
+							enemy.IsAlive = false;
 
-            spriteBatch.Draw(cannon.sprite, cannon.position, null, Color.White, cannon.rotation, cannon.center, 1.0f, SpriteEffects.None, 0);
+							score += 1;
 
-            foreach (GameObject enemy in enemies)
-            {
-                if (enemy.alive)
-                {
-                    spriteBatch.Draw(enemy.sprite, enemy.position, Color.White);
-                }
-            }
+							break;
+						}
+					}
+				}
+			}
+		}
 
-            spriteBatch.DrawString(font, "Score: " + score.ToString(), new Vector2(scoreDrawPoint.X * viewportRect.Width, scoreDrawPoint.Y * viewportRect.Height), Color.Yellow);
+		public void UpdateEnemies()
+		{
+			foreach (GameObject enemy in enemies)
+			{
+				if (enemy.IsAlive)
+				{
+					enemy.Position += enemy.Velocity;
 
-            spriteBatch.End();
+					if (!viewportRect.Contains(new Point((Int32)enemy.Position.X, (Int32)enemy.Position.Y)))
+					{
+						enemy.IsAlive = false;
+					}
+				}
+				else
+				{
+					enemy.IsAlive = true;
+					enemy.Position = new Vector2(viewportRect.Right,
+						MathHelper.Lerp(
+						(Single)viewportRect.Height * minEnemyHeight,
+						(Single)viewportRect.Height * maxEnemyHeight,
+						(Single)random.NextDouble()));
+					enemy.Velocity = new Vector2(MathHelper.Lerp(-minEnemyVelocity, -maxEnemyVelocity, (Single)random.NextDouble()), 0);
+				}
+			}
+		}
 
-            base.Draw(gameTime);
-        }
-    }
+		public void FireCannonBall()
+		{
+			foreach (GameObject ball in cannonBalls)
+			{
+				if (!ball.IsAlive)
+				{
+					ball.IsAlive = true;
+					ball.Position = cannon.Position + new Vector2((Single)Math.Sin(cannon.Sprite.Height)) - ball.Center;
+					ball.Velocity = new Vector2((Single)Math.Cos(cannon.Rotation), (Single)Math.Sin(cannon.Rotation)) * 5.0f;
+
+					return;
+				}
+			}
+		}
+
+		private GraphicsDeviceManager graphics;
+		private SpriteBatch spriteBatch;
+
+		private Texture2D backgroundTexture2D;
+		private Rectangle viewportRect;
+
+		private GameObject cannon;
+		private GameObject[] cannonBalls;
+
+		private GameObject[] enemies;
+
+		private SpriteFont font;
+		private Vector2 scoreDrawPoint = new Vector2(0.1f, 0.1f);
+
+		private GamePadState previousGamePadState = GamePad.GetState(PlayerIndex.One);
+		private KeyboardState previousKeyboardState = Keyboard.GetState();
+
+		private readonly Int32 maxCannonBalls = 10;
+		private readonly Int32 maxEnemies = 10;
+
+		private readonly Single maxEnemyHeight = 0.1f;
+		private readonly Single minEnemyHeight = 0.5f;
+		private readonly Single maxEnemyVelocity = 5.0f;
+		private readonly Single minEnemyVelocity = 1.0f;
+
+		private Int32 score = 0;
+		private Random random = new Random();
+	}
 }
