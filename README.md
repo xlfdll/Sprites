@@ -18,3 +18,5 @@ Just run and have fun ;-)
 * Visual Studio 2015+
 
 No need to install MonoGame SDK beforehand. The project will automatically restore MonoGame assemblies from NuGet during compilation.
+
+Before the build, generate-build-number.sh needs to be executed in a Git / Bash shell to generate build information code file (BuildInfo.cs).
