@@ -7,7 +7,7 @@ Sprites demo game derived from Microsoft XNA tutorials and ported to MonoGame fr
 </p>
 
 ## System Requirements
-* .NET Framework 4.7.2+
+* .NET Framework 4.8
 
 [Runtime configuration](https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-configure-an-app-to-support-net-framework-4-or-4-5) is needed for running on other versions of .NET Framework.
 
